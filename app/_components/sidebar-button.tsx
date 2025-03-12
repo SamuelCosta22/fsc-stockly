@@ -15,7 +15,7 @@ const SidebarButton = ({ children, href }: SidebarButtonProps) => {
     <Button
       className={clsx(
         "justify-start gap-2 text-base",
-        pathname === href ? "font-semibold text-[#00a180]" : "text-slate-500",
+        pathname === href ? "text-customGreen font-semibold" : "text-slate-500",
       )}
       variant={pathname === `${href}` ? "secondary" : "ghost"}
       asChild
