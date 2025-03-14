@@ -4,12 +4,7 @@ import { DataTable } from "../_components/ui/data-table";
 import { productTableColumns } from "./_components/table-columns";
 
 const ProductsPage = async () => {
-  const response = await fetch("http://localhost:3000/api/products", {
-    method: "GET",
-    next: {
-      revalidate: 5,
-    },
-  });
+  const response = await fetch("http://localhost:3000/api/products");
   const { products, randomNumber } = await response.json();
 
   return (
@@ -30,6 +25,7 @@ const ProductsPage = async () => {
         </Button>
       </div>
 
+      {/* <ProductList products={products} /> */}
       <DataTable
         columns={productTableColumns}
         data={JSON.parse(JSON.stringify(products))}
