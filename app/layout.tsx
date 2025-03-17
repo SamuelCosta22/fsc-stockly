@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Sidebar from "./_components/sidebar";
 import "./globals.css";
 import { Inter } from "next/font/google";
+import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -19,12 +20,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="pt-BR">
       <body className={`${inter.className} antialiased`}>
         <div className="flex h-full">
           <Sidebar />
           {children}
         </div>
+        <Toaster />
       </body>
     </html>
   );
