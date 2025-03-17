@@ -37,7 +37,7 @@ export const productTableColumns: ColumnDef<Product>[] = [
           className={clsx(
             "gap-1 font-semibold",
             label === "Em estoque"
-              ? "text-customGreen bg-green-50"
+              ? "bg-green-50 text-customGreen"
               : "bg-slate-100 text-slate-500",
           )}
           variant="outline"

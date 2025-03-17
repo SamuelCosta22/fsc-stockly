@@ -1,7 +1,6 @@
-import { PlusIcon } from "lucide-react";
-import { Button } from "../_components/ui/button";
 import { DataTable } from "../_components/ui/data-table";
 import { cachedGetProducts } from "../_data-access/product/get-product";
+import AddProductButton from "./_components/add-product-button";
 import { productTableColumns } from "./_components/table-columns";
 
 const ProductsPage = async () => {
@@ -16,13 +15,9 @@ const ProductsPage = async () => {
           </span>
           <h2 className="text-xl font-semibold">Gestão de Produtos</h2>
         </div>
-        <Button className="gap-2 bg-customGreen">
-          <PlusIcon size={20} />
-          Novo produto
-        </Button>
+        <AddProductButton />
       </div>
 
-      {/* <ProductList products={products} /> */}
       <DataTable
         columns={productTableColumns}
         data={JSON.parse(JSON.stringify(products))}
