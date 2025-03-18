@@ -26,35 +26,38 @@ import {
   FormMessage,
 } from "../../_components/ui/form";
 
-import { createProduct } from "@/app/_actions/products/create-product";
+import { upsertProduct } from "@/app/_actions/products/upsert-product";
 import {
-  createProductSchema,
-  CreateProductSchema,
-} from "@/app/_actions/products/create-product/schema";
+  upsertProductSchema,
+  UpsertProductSchema,
+} from "@/app/_actions/products/upsert-product/schema";
 import { toast } from "sonner";
 
 interface UpsertProductDialogContentProps {
+  defaultValues?: UpsertProductSchema;
   onSuccess?: () => void;
 }
 
 const UpsertProductDialogContent = ({
+  defaultValues,
   onSuccess,
 }: UpsertProductDialogContentProps) => {
-  //   const [dialogIsOpen, setDialogIsOpen] = useState(false);
-
-  const form = useForm<CreateProductSchema>({
+  const form = useForm<UpsertProductSchema>({
     shouldUnregister: true,
-    resolver: zodResolver(createProductSchema),
+    resolver: zodResolver(upsertProductSchema),
+    defaultValues: defaultValues,
   });
 
-  const onSubmit = async (data: CreateProductSchema) => {
+  const isEditing = !!defaultValues;
+
+  const onSubmit = async (data: UpsertProductSchema) => {
     try {
-      await createProduct(data);
-      toast.success("Produto adicionado com sucesso!");
+      await upsertProduct({ ...data, id: defaultValues?.id });
+      toast.success(`Produto ${isEditing ? 'atualizado' : 'adicionado'} com sucesso!`);
       onSuccess?.();
     } catch (error) {
       console.error(error);
-      toast.error("Erro ao adicionar produto.");
+      toast.error(`Erro ao ${isEditing ? 'atualizar' : 'adicionar'} produto.`);
     }
   };
 
@@ -62,7 +65,9 @@ const UpsertProductDialogContent = ({
     <DialogContent className="max-w-80">
       <Form {...form}>
         <DialogHeader>
-          <DialogTitle>Cadastrar produto</DialogTitle>
+          <DialogTitle>
+            {isEditing ? "Editar" : "Cadastrar"} produto
+          </DialogTitle>
           <DialogDescription>Insira as informações abaixo</DialogDescription>
         </DialogHeader>
 
@@ -134,7 +139,7 @@ const UpsertProductDialogContent = ({
               {form.formState.isSubmitting && (
                 <Loader2Icon className="animate-spin" size={16} />
               )}
-              Criar produto
+              {isEditing ? "Atualizar" : "Criar"} produto
             </Button>
           </DialogFooter>
         </form>
