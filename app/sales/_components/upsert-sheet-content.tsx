@@ -14,6 +14,7 @@ import { Input } from "@/app/_components/ui/input";
 import {
   SheetContent,
   SheetDescription,
+  SheetFooter,
   SheetHeader,
   SheetTitle,
 } from "@/app/_components/ui/sheet";
@@ -30,11 +31,13 @@ import {
 import { FormatCurrency } from "@/app/_helpers/currency";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Product } from "@prisma/client";
-import { PlusIcon } from "lucide-react";
+import { CheckIcon, PlusIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import SalesTableDropdownMenu from "./table-dropdown-menu";
+import { createSale } from "@/app/_actions/sales/create-sale";
+import { toast } from "sonner";
 
 const formSchema = z.object({
   productId: z.string().uuid({
@@ -48,6 +51,7 @@ type FormSchema = z.infer<typeof formSchema>;
 interface UpsertSalesSheetContentProps {
   products: Product[];
   productOptions: ComboboxOption[];
+  onSubmitSucces: () => void;
 }
 
 interface SelectedProduct {
@@ -60,6 +64,7 @@ interface SelectedProduct {
 const UpsertSalesSheetContent = ({
   products,
   productOptions,
+  onSubmitSucces,
 }: UpsertSalesSheetContentProps) => {
   const [selectedProducts, setSelectedProducts] = useState<SelectedProduct[]>(
     [],
@@ -135,6 +140,21 @@ const UpsertSalesSheetContent = ({
     });
   };
 
+  const onSubmitSale = async () => {
+    try {
+      await createSale({
+        products: selectedProducts.map((product) => ({
+          id: product.id,
+          quantity: product.quantity,
+        })),
+      });
+      toast.success("Venda realizada com sucesso!");
+      onSubmitSucces();
+    } catch (error) {
+      toast.error("Erro ao realizar a venda!");
+    }
+  };
+
   return (
     <SheetContent className="!max-w-[650px]">
       <SheetHeader>
@@ -184,7 +204,7 @@ const UpsertSalesSheetContent = ({
             )}
           />
 
-          <Button type="submit" className="w-full gap-2 bg-customGreen">
+          <Button type="submit" className="w-full gap-2" variant="secondary">
             <PlusIcon size={20} />
             Adicionar produto à venda
           </Button>
@@ -225,6 +245,17 @@ const UpsertSalesSheetContent = ({
           </TableRow>
         </TableFooter>
       </Table>
+
+      <SheetFooter className="pt-6">
+        <Button
+          className="w-full gap-2 bg-customGreen"
+          disabled={selectedProducts.length === 0}
+          onClick={onSubmitSale}
+        >
+          <CheckIcon size={20} />
+          Finalizar Venda
+        </Button>
+      </SheetFooter>
     </SheetContent>
   );
 };
