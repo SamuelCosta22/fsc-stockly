@@ -23,7 +23,10 @@ const SalesPage = async () => {
           <SheetTrigger asChild>
             <Button className="bg-customGreen">Nova Venda</Button>
           </SheetTrigger>
-          <UpsertSalesSheetContent productOptions={productOptions} />
+          <UpsertSalesSheetContent
+            products={JSON.parse(JSON.stringify(products))}
+            productOptions={productOptions}
+          />
         </Sheet>
       </div>
 
