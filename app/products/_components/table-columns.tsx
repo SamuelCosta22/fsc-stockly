@@ -4,9 +4,7 @@ import { Badge } from "@/app/_components/ui/badge";
 import { Product } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
 import clsx from "clsx";
-import {
-  CircleIcon
-} from "lucide-react";
+import { CircleIcon } from "lucide-react";
 import ProducTableDropdownMenu from "./table-dropdown-menu";
 
 const getStatusLabel = (status: string) => {
