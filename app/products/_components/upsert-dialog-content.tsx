@@ -32,6 +32,7 @@ import {
   UpsertProductSchema,
 } from "@/app/_actions/products/upsert-product/schema";
 import { toast } from "sonner";
+import { useAction } from "next-safe-action/hooks";
 
 interface UpsertProductDialogContentProps {
   defaultValues?: UpsertProductSchema;
@@ -42,23 +43,28 @@ const UpsertProductDialogContent = ({
   defaultValues,
   onSuccess,
 }: UpsertProductDialogContentProps) => {
+  const isEditing = !!defaultValues;
+
+  const { execute: executeUpsertProduct } = useAction(upsertProduct, {
+    onSuccess: () => {
+      onSuccess?.();
+      toast.success(
+        `Produto ${isEditing ? "salvo" : "adicionado"} com sucesso!`,
+      );
+    },
+    onError: () => {
+      toast.error("Ocorreu um erro ao adicionar o produto.");
+    },
+  });
+
   const form = useForm<UpsertProductSchema>({
     shouldUnregister: true,
     resolver: zodResolver(upsertProductSchema),
     defaultValues: defaultValues,
   });
 
-  const isEditing = !!defaultValues;
-
-  const onSubmit = async (data: UpsertProductSchema) => {
-    try {
-      await upsertProduct({ ...data, id: defaultValues?.id });
-      toast.success(`Produto ${isEditing ? 'atualizado' : 'adicionado'} com sucesso!`);
-      onSuccess?.();
-    } catch (error) {
-      console.error(error);
-      toast.error(`Erro ao ${isEditing ? 'atualizar' : 'adicionar'} produto.`);
-    }
+  const onSubmit = (data: UpsertProductSchema) => {
+    executeUpsertProduct({ ...data, id: defaultValues?.id });
   };
 
   return (
