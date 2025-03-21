@@ -11,15 +11,15 @@ import { Product } from "@prisma/client";
 import { ClipboardCopyIcon, MoreHorizontalIcon, TrashIcon } from "lucide-react";
 import { toast } from "sonner";
 
-interface SalesTableDropdownMenuProps {
+interface UpsertSalesTableDropdownMenuProps {
   product: Pick<Product, "id">;
   onDelete: (productId: string) => void;
 }
 
-const SalesTableDropdownMenu = ({
+const UpsertSalesTableDropdownMenu = ({
   product,
   onDelete,
-}: SalesTableDropdownMenuProps) => {
+}: UpsertSalesTableDropdownMenuProps) => {
   const onClickCopy = (productId: string) => {
     navigator.clipboard.writeText(productId);
     toast.success("Código copiado!");
@@ -57,4 +57,4 @@ const SalesTableDropdownMenu = ({
   );
 };
 
-export default SalesTableDropdownMenu;
+export default UpsertSalesTableDropdownMenu;
