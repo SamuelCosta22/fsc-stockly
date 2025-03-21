@@ -3,39 +3,56 @@
 import { db } from "@/app/_lib/prisma";
 import { actionClient } from "@/app/_lib/safe-action";
 import { revalidatePath } from "next/cache";
-import { createSaleSchema } from "./schema";
+import { upsertSaleSchema } from "./schema";
 import { returnValidationErrors } from "next-safe-action";
 
-export const createSale = actionClient
-  .schema(createSaleSchema)
-  .action(async ({ parsedInput: { products } }) => {
+export const upsertSale = actionClient
+  .schema(upsertSaleSchema)
+  .action(async ({ parsedInput: { products, id } }) => {
+    const isUpdate = Boolean(id);
     await db.$transaction(async (trx) => {
+      if (isUpdate) {
+        const existingSale = await trx.sale.findUnique({
+          where: { id },
+          include: { products: true },
+        });
+        if (!existingSale) return;
+        await trx.sale.delete({
+          where: { id },
+        });
+        for (const product of existingSale.products) {
+          await trx.product.update({
+            where: { id: product.productId },
+            data: {
+              stock: {
+                increment: product.quantity,
+              },
+            },
+          });
+        }
+      }
       const sale = await trx.sale.create({
         data: {
           date: new Date(),
         },
       });
-
       for (const product of products) {
-        const productFromDb = await db.product.findUnique({
+        const productFromDb = await trx.product.findUnique({
           where: {
             id: product.id,
           },
         });
-
         if (!productFromDb) {
-          returnValidationErrors(createSaleSchema, {
+          returnValidationErrors(upsertSaleSchema, {
             _errors: ["Product not found."],
           });
         }
-
         const productIsOutOfStock = product.quantity > productFromDb.stock;
         if (productIsOutOfStock) {
-          returnValidationErrors(createSaleSchema, {
-            _errors: ["Product is out of stock."],
+          returnValidationErrors(upsertSaleSchema, {
+            _errors: ["Product out of stock."],
           });
         }
-
         await trx.saleProduct.create({
           data: {
             saleId: sale.id,
@@ -44,7 +61,6 @@ export const createSale = actionClient
             unitPrice: productFromDb.price,
           },
         });
-
         await trx.product.update({
           where: {
             id: product.id,
@@ -58,4 +74,5 @@ export const createSale = actionClient
       }
     });
     revalidatePath("/products");
+    revalidatePath("/sales");
   });

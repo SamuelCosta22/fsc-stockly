@@ -13,6 +13,11 @@ const SalesPage = async () => {
   }));
 
   const sales = await getSales();
+  const dataTable = sales.map((sale) => ({
+    ...sale,
+    products,
+    productOptions,
+  }));
 
   return (
     <div className="w-full space-y-8 p-8">
@@ -28,7 +33,10 @@ const SalesPage = async () => {
         />
       </div>
 
-      <DataTable columns={saleTableColumns} data={sales} />
+      <DataTable
+        columns={saleTableColumns}
+        data={JSON.parse(JSON.stringify(dataTable))}
+      />
     </div>
   );
 };
