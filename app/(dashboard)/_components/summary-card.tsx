@@ -63,13 +63,13 @@ const SummaryCard = ({
 
 export default SummaryCard;
 
-export const SummaryCardSkeleton = () => {
+export const SummaryCardSkeleton = ({ className }: { className?: string }) => {
   return (
     <Skeleton className="bg-white p-4">
       <div className="space-y-2">
         <Skeleton className="h-9 w-9" />
         <Skeleton className="h-5 w-24" />
-        <Skeleton className="h-8 w-[50%]" />
+        <Skeleton className={cn("h-8 w-[50%]", className)} />
       </div>
     </Skeleton>
   );
