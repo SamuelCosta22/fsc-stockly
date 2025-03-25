@@ -3,7 +3,6 @@
 import { db } from "@/app/_lib/prisma";
 
 interface DashboardDTO {
-  totalRevenue: number;
   todayRevenue: number;
   totalSales: number;
   totalStock: number;
@@ -11,12 +10,6 @@ interface DashboardDTO {
 }
 
 export const getDashboardData = async (): Promise<DashboardDTO> => {
-  const totalRevenuePromise = db.saleProduct.aggregate({
-    _sum: {
-      unitPrice: true,
-    },
-  });
-
   const todayRevenuePromise = db.saleProduct.aggregate({
     _sum: {
       unitPrice: true,
@@ -39,9 +32,8 @@ export const getDashboardData = async (): Promise<DashboardDTO> => {
 
   const totalProductsPromise = db.product.count();
 
-  const [totalRevenue, todayRevenue, totalSales, totalStock, totalProducts] =
+  const [todayRevenue, totalSales, totalStock, totalProducts] =
     await Promise.all([
-      totalRevenuePromise,
       todayRevenuePromise,
       totalSalesPromise,
       totalStockPromise,
@@ -49,7 +41,6 @@ export const getDashboardData = async (): Promise<DashboardDTO> => {
     ]);
 
   return {
-    totalRevenue: Number(totalRevenue._sum.unitPrice),
     todayRevenue: Number(todayRevenue._sum.unitPrice),
     totalSales,
     totalStock: Number(totalStock._sum.stock),

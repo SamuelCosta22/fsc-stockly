@@ -9,20 +9,23 @@ import Header, {
   HeaderSubtitle,
   HeaderTitle,
 } from "../_components/header";
+import { getDashboardData } from "../_data-access/dashboard/get-dahsboard-data";
+import { getLast14DaysRevenue } from "../_data-access/dashboard/get-last-14-days-revenue";
+import { getMostSoldProducts } from "../_data-access/dashboard/get-most-sold-products";
+import { FormatCurrency } from "../_helpers/currency";
+import MostSoldProductsItem from "./_components/most-sold-products-item";
+import RevenueChart from "./_components/revenue-chart";
 import SummaryCard, {
   SummaryCardIcon,
   SummaryCardTitle,
   SummaryCardValue,
 } from "./_components/summary-card";
-import { FormatCurrency } from "../_helpers/currency";
-import { getDashboardData } from "../_data-access/dashboard/get-dahsboard-data";
-import RevenueChart from "./_components/revenue-chart";
-import { getLast14DaysRevenue } from "../_data-access/dashboard/get-last-14-days-revenue";
-import { getMostSoldProducts } from "../_data-access/dashboard/get-most-sold-products";
-import MostSoldProductsItem from "./_components/most-sold-products-item";
+import TotalRevenueCard from "./_components/total-revenue-card";
+import { Suspense } from "react";
+import { Skeleton } from "../_components/ui/skeleton";
 
 const Home = async () => {
-  const { totalRevenue, todayRevenue, totalSales, totalStock, totalProducts } =
+  const { todayRevenue, totalSales, totalStock, totalProducts } =
     await getDashboardData();
 
   const totalLast14DaysRevenue = await getLast14DaysRevenue();
@@ -38,13 +41,11 @@ const Home = async () => {
       </Header>
 
       <div className="grid grid-cols-2 gap-6">
-        <SummaryCard>
-          <SummaryCardIcon>
-            <DollarSign />
-          </SummaryCardIcon>
-          <SummaryCardTitle>Receita Total</SummaryCardTitle>
-          <SummaryCardValue>{FormatCurrency(totalRevenue)}</SummaryCardValue>
-        </SummaryCard>
+        <Suspense
+          fallback={<Skeleton className="rounded-xl bg-white bg-opacity-75" />}
+        >
+          <TotalRevenueCard />
+        </Suspense>
 
         <SummaryCard>
           <SummaryCardIcon>
@@ -88,11 +89,11 @@ const Home = async () => {
           <RevenueChart data={totalLast14DaysRevenue} />
         </div>
 
-        <div className="flex h-full flex-col overflow-hidden rounded-xl bg-white =">
-          <p className="text-lg font-semibold text-slate-900 p-6">
+        <div className="= flex h-full flex-col overflow-hidden rounded-xl bg-white">
+          <p className="p-6 text-lg font-semibold text-slate-900">
             Produtos mais vendidos
           </p>
-          <div className="overflow-y-auto space-y-4 px-6 pb-6">
+          <div className="space-y-4 overflow-y-auto px-6 pb-6">
             {mostSoldProducts.map((product) => (
               <MostSoldProductsItem key={product.productId} product={product} />
             ))}
