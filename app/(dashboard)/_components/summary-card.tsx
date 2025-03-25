@@ -1,3 +1,4 @@
+import { Skeleton } from "@/app/_components/ui/skeleton";
 import { cn } from "@/app/_lib/utils";
 import { ReactNode } from "react";
 
@@ -61,3 +62,15 @@ const SummaryCard = ({
 };
 
 export default SummaryCard;
+
+export const SummaryCardSkeleton = () => {
+  return (
+    <Skeleton className="bg-white p-4">
+      <div className="space-y-2">
+        <Skeleton className="h-9 w-9" />
+        <Skeleton className="h-5 w-24" />
+        <Skeleton className="h-8 w-[50%]" />
+      </div>
+    </Skeleton>
+  );
+};

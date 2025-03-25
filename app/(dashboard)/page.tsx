@@ -1,9 +1,9 @@
 import {
   CircleDollarSign,
-  DollarSign,
   PackageIcon,
   ShoppingBasketIcon,
 } from "lucide-react";
+import { Suspense } from "react";
 import Header, {
   HeaderLeft,
   HeaderSubtitle,
@@ -12,21 +12,19 @@ import Header, {
 import { getDashboardData } from "../_data-access/dashboard/get-dahsboard-data";
 import { getLast14DaysRevenue } from "../_data-access/dashboard/get-last-14-days-revenue";
 import { getMostSoldProducts } from "../_data-access/dashboard/get-most-sold-products";
-import { FormatCurrency } from "../_helpers/currency";
 import MostSoldProductsItem from "./_components/most-sold-products-item";
 import RevenueChart from "./_components/revenue-chart";
 import SummaryCard, {
   SummaryCardIcon,
+  SummaryCardSkeleton,
   SummaryCardTitle,
   SummaryCardValue,
 } from "./_components/summary-card";
+import TodayRevenueCard from "./_components/today-revenue-card";
 import TotalRevenueCard from "./_components/total-revenue-card";
-import { Suspense } from "react";
-import { Skeleton } from "../_components/ui/skeleton";
 
 const Home = async () => {
-  const { todayRevenue, totalSales, totalStock, totalProducts } =
-    await getDashboardData();
+  const { totalSales, totalStock, totalProducts } = await getDashboardData();
 
   const totalLast14DaysRevenue = await getLast14DaysRevenue();
   const mostSoldProducts = await getMostSoldProducts();
@@ -41,19 +39,13 @@ const Home = async () => {
       </Header>
 
       <div className="grid grid-cols-2 gap-6">
-        <Suspense
-          fallback={<Skeleton className="rounded-xl bg-white bg-opacity-75" />}
-        >
+        <Suspense fallback={<SummaryCardSkeleton />}>
           <TotalRevenueCard />
         </Suspense>
 
-        <SummaryCard>
-          <SummaryCardIcon>
-            <DollarSign />
-          </SummaryCardIcon>
-          <SummaryCardTitle>Receita Hoje</SummaryCardTitle>
-          <SummaryCardValue>{FormatCurrency(todayRevenue)}</SummaryCardValue>
-        </SummaryCard>
+        <Suspense fallback={<SummaryCardSkeleton />}>
+          <TodayRevenueCard />
+        </Suspense>
       </div>
 
       <div className="grid grid-cols-3 gap-6">
