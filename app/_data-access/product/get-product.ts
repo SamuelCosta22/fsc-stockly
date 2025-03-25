@@ -2,8 +2,10 @@ import { db } from "@/app/_lib/prisma";
 import { Product } from "@prisma/client";
 import { cache } from "react";
 
+export type ProductStatusDTO = "IN_STOCK" | "OUT_OF_STOCK";
+
 export interface ProductsDTO extends Product {
-  status: "IN_STOCK" | "OUT_OF_STOCK";
+  status: ProductStatusDTO;
 }
 
 export const getProducts = async (): Promise<ProductsDTO[]> => {

@@ -56,7 +56,7 @@ const SummaryCard = ({
   className?: string;
 }) => {
   return (
-    <div className={cn("rounded-xl bg-white p-6", className)}>{children}</div>
+    <div className={cn("rounded-xl bg-white p-4", className)}>{children}</div>
   );
 };
 
