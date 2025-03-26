@@ -4,20 +4,17 @@ import Header, {
   HeaderSubtitle,
   HeaderTitle,
 } from "../_components/header";
-import { getLast14DaysRevenue } from "../_data-access/dashboard/get-last-14-days-revenue";
 import { getMostSoldProducts } from "../_data-access/dashboard/get-most-sold-products";
+import Last14DaysRevenueChartCard from "./_components/last-14-days-revenue-chart-card";
 import MostSoldProductsItem from "./_components/most-sold-products-item";
-import RevenueChart from "./_components/revenue-chart";
-import {
-  SummaryCardSkeleton
-} from "./_components/summary-card";
+import { SummaryCardSkeleton } from "./_components/summary-card";
 import TodayRevenueCard from "./_components/today-revenue-card";
 import TotalProductsCard from "./_components/total-products-card";
 import TotalRevenueCard from "./_components/total-revenue-card";
 import TotalSalesCard from "./_components/total-sales-card";
 import TotalInStockCard from "./_components/total-stock-card";
+import { Skeleton } from "../_components/ui/skeleton";
 const Home = async () => {
-  const totalLast14DaysRevenue = await getLast14DaysRevenue();
   const mostSoldProducts = await getMostSoldProducts();
 
   return (
@@ -54,13 +51,19 @@ const Home = async () => {
       </div>
 
       <div className="grid min-h-0 grid-cols-3 gap-4">
-        <div className="col-span-2 flex h-full flex-col overflow-hidden rounded-xl bg-white p-6">
-          <p className="text-lg font-semibold text-slate-900">Receita</p>
-          <p className="text-sm text-slate-400">Últimos 14 dias</p>
-          <RevenueChart data={totalLast14DaysRevenue} />
-        </div>
-
-        <div className="= flex h-full flex-col overflow-hidden rounded-xl bg-white">
+        <Suspense
+          fallback={
+            <Skeleton className="bg-white p-4">
+              <div className="space-y-2">
+                <Skeleton className="h-7 w-24" />
+                <Skeleton className="h-5 w-48" />
+              </div>
+            </Skeleton>
+          }
+        >
+          <Last14DaysRevenueChartCard />
+        </Suspense>
+        <div className="flex h-full flex-col overflow-hidden rounded-xl bg-white">
           <p className="p-6 text-lg font-semibold text-slate-900">
             Produtos mais vendidos
           </p>
