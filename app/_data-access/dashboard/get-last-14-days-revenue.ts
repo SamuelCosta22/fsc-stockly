@@ -6,7 +6,7 @@ import dayjs from "dayjs";
 
 export interface DayTotalRevenueDTO {
   day: Date;
-  revenue: number;
+  totalRevenue: number;
 }
 
 export const getLast14DaysRevenue = async (): Promise<DayTotalRevenueDTO[]> => {
@@ -32,7 +32,7 @@ export const getLast14DaysRevenue = async (): Promise<DayTotalRevenueDTO[]> => {
       day.endOf("day").toDate(),
     );
     totalLast14DaysRevenue.push({
-      day: day.format("DD/MM"),
+      day: day.toDate(), // Usando o valor como Date
       totalRevenue: Number(dayTotalRevenue[0].totalRevenue),
     });
   }
