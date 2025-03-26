@@ -77,6 +77,7 @@ const UpsertSheetContent = ({
   const [selectedProducts, setSelectedProducts] = useState<SelectedProduct[]>(
     defaultSelectedProducts ?? [],
   );
+
   const { execute: executeUpsertSale } = useAction(upsertSale, {
     onError: ({ error: { validationErrors, serverError } }) => {
       const flattenedErrors = flattenValidationErrors(validationErrors);
@@ -87,6 +88,7 @@ const UpsertSheetContent = ({
       setSheetIsOpen(false);
     },
   });
+
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -94,24 +96,30 @@ const UpsertSheetContent = ({
       quantity: 1,
     },
   });
+
   useEffect(() => {
     if (!isOpen) {
       form.reset();
       setSelectedProducts([]);
     }
   }, [form, isOpen]);
+
   useEffect(() => {
     setSelectedProducts(defaultSelectedProducts ?? []);
   }, [defaultSelectedProducts]);
+
   const onSubmit = (data: FormSchema) => {
     const selectedProduct = products.find(
       (product) => product.id === data.productId,
     );
+
     if (!selectedProduct) return;
+
     setSelectedProducts((currentProducts) => {
       const existingProduct = currentProducts.find(
         (product) => product.id === selectedProduct.id,
       );
+
       if (existingProduct) {
         const productIsOutOfStock =
           existingProduct.quantity + data.quantity > selectedProduct.stock;
@@ -132,6 +140,7 @@ const UpsertSheetContent = ({
           return product;
         });
       }
+
       const productIsOutOfStock = data.quantity > selectedProduct.stock;
       if (productIsOutOfStock) {
         form.setError("quantity", {
@@ -139,6 +148,7 @@ const UpsertSheetContent = ({
         });
         return currentProducts;
       }
+
       form.reset();
       return [
         ...currentProducts,
@@ -150,6 +160,7 @@ const UpsertSheetContent = ({
       ];
     });
   };
+
   const productsTotal = useMemo(() => {
     return selectedProducts.reduce((acc, product) => {
       return acc + product.price * product.quantity;
@@ -161,6 +172,7 @@ const UpsertSheetContent = ({
       return currentProducts.filter((product) => product.id !== productId);
     });
   };
+
   const onSubmitSale = async () => {
     executeUpsertSale({
       id: saleId,
@@ -170,6 +182,7 @@ const UpsertSheetContent = ({
       })),
     });
   };
+
   return (
     <SheetContent className="!max-w-[700px]">
       <SheetHeader>
